@@ -1,0 +1,58 @@
+{
+  "name": "nameam-noc-dashboard",
+  "version": "0.1.0",
+  "description": "Name.am NOC Dashboard desktop application",
+  "author": "Name.am",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix ../frontend run dev\" \"wait-on http://127.0.0.1:5173 && set ELECTRON_RENDERER_URL=http://127.0.0.1:5173&& electron .\"",
+    "start": "electron .",
+    "build:frontend": "npm --prefix ../frontend run build",
+    "build:backend": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Set-Location ..\\backend; $work = Join-Path $env:TEMP ('nameam_noc_pyinstaller_' + $PID); .\\.venv\\Scripts\\python.exe -m PyInstaller --noconfirm nameam_backend.spec --distpath dist --workpath $work\"",
+    "package": "electron-builder --dir --config.directories.output=../release-build",
+    "dist": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$out = Join-Path $env:LOCALAPPDATA 'NameAM-NOC-Dashboard-Release'; npx electron-builder --win nsis --config.directories.output=$out\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "am.name.nocdashboard",
+    "productName": "Name.am NOC Dashboard",
+    "artifactName": "Name.am-NOC-Dashboard-Setup.${ext}",
+    "directories": {
+      "output": "../release-build"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/dist/backend-runtime.exe",
+        "to": "backend/backend.exe"
+      },
+      {
+        "from": "../frontend/dist",
+        "to": "frontend/dist"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Name.am NOC Dashboard"
+    }
+  }
+}

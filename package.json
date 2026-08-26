@@ -1,0 +1,11 @@
+{
+  "name": "nameam-noc-dashboard-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix electron run dev",
+    "build": "npm --prefix frontend run build && npm --prefix electron run build:backend",
+    "package": "npm run build && npm --prefix electron run package",
+    "dist": "npm run build && npm --prefix electron run dist"
+  }
+}
