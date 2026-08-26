@@ -20,9 +20,11 @@ import type {
   TerminalConnectResult,
   WhmActionResult,
 } from "../types";
+import { mockRequest } from "./mockClient";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8765/api";
 const STATIC_AUTH_TOKEN = import.meta.env.VITE_NAMEAM_NOC_AUTH_TOKEN;
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
 let authTokenPromise: Promise<string> | null = null;
 
 export class ApiError extends Error {
@@ -38,6 +40,10 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  if (DEMO_MODE) {
+    return mockRequest<T>(path, options);
+  }
+
   const token = await getAuthToken();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
